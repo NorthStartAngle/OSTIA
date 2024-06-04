@@ -13,6 +13,7 @@ namespace OSTIA
         public string Name { get; set; }
         public string Password { get; set; }
         public string Access { get; set; }
+
     }
         
     public struct Inquiry
@@ -21,6 +22,31 @@ namespace OSTIA
         public int Response;
         public int Pause;
         public int Dial;
+        public string toString()
+        {
+            return $"{Power}|{Response}|{Pause}|{Dial}";
+        }
+
+        public static Inquiry Parse(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return new Inquiry();
+            Inquiry exam = new Inquiry();
+            string[] sep = s.Split('|');
+            try
+            {
+                if (sep.Length > 0) { exam.Power = Convert.ToInt32(sep[0]); }
+                if (sep.Length > 1) { exam.Response = Convert.ToInt32(sep[1]); }
+                if (sep.Length > 2) { exam.Pause = Convert.ToInt32(sep[2]); }
+                if (sep.Length > 3) { exam.Dial = Convert.ToInt32(sep[3]); }
+            }
+            catch (Exception)
+            {
+            }
+
+
+            return exam;
+        }
+
     }
 
     public struct Exam
@@ -42,6 +68,35 @@ namespace OSTIA
         {
             return $"{MaxPoints}|{WCB}|{InjComplaint}|{BodyPart}|{CaseNumber}|{AssesserID}|{dt.ToString("yyyy-M-d h:m:s")}|{SampleRate}|{SampFreq}|{SampDuty}|{SampBand}|{Completed}|{VerifySurName}|";
         }
+
+        public static Exam Parse(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return new Exam();
+            Exam exam = new Exam();
+            string[] sep = s.Split('|');
+            try
+            {
+                if (sep.Length > 0) { exam.MaxPoints = Convert.ToInt32(sep[0]); }
+                if (sep.Length > 1) { exam.WCB = sep[1]; }
+                if (sep.Length > 2) { exam.InjComplaint = sep[2]; }
+                if (sep.Length > 3) { exam.BodyPart = sep[3]; }
+                if (sep.Length > 4) { exam.CaseNumber = sep[4]; }
+                if (sep.Length > 5) { exam.AssesserID = sep[5]; }
+                if (sep.Length > 6) { exam.dt = DateTime.Parse(sep[6]); }
+                if (sep.Length > 7) { exam.SampleRate = sep[7]; }
+                if (sep.Length > 8) { exam.SampFreq = sep[8]; }
+                if (sep.Length > 9) { exam.SampDuty = sep[9]; }
+                if (sep.Length > 10) { exam.SampBand = sep[10]; }
+                if (sep.Length > 11) { exam.Completed = sep[11]; }
+                if (sep.Length > 12) { exam.VerifySurName = sep[12]; }
+            }
+            catch(Exception)
+            {
+            }
+            
+
+            return exam;
+        }
     }
 
     public struct Patient
@@ -50,6 +105,30 @@ namespace OSTIA
         public string FirstName { get; set; }
 
         public string DOB { get; set; }
+
+        public string toString()
+        {
+            return $"{FirstName}|{SurName}|{DOB}";
+        }
+
+        public static Patient Parse(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return new Patient();
+            Patient exam = new Patient();
+            string[] sep = s.Split('|');
+            try
+            {
+                if (sep.Length > 0) { exam.FirstName = sep[0]; }
+                if (sep.Length > 1) { exam.SurName = sep[1]; }
+                if (sep.Length > 2) { exam.DOB = sep[2]; }
+            }
+            catch (Exception)
+            {
+            }
+
+
+            return exam;
+        }
     }
 
     internal class Global

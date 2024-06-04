@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,8 +16,8 @@ namespace OSTIA
 {
     public partial class Manager : Form
     {
-        private  SerialPort _serialPort;
-        private Task readMonitor = null;
+        private SerialPort _serialPort;
+        private Task? readMonitor = null;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private CancellationToken _token;
 
@@ -25,35 +27,37 @@ namespace OSTIA
 
             _serialPort = new SerialPort();
             _serialPort.PortName = "COM3";
-            _serialPort.BaudRate =1200;
+            _serialPort.BaudRate = 1200;
             _serialPort.Parity = Parity.None;
             _serialPort.DataBits = 8;
             _serialPort.StopBits = StopBits.One;
-            _serialPort.Handshake =Handshake.None;
+            _serialPort.Handshake = Handshake.None;
 
             // Set the read/write timeouts
             _serialPort.ReadTimeout = 500;
             _serialPort.WriteTimeout = 500;
             _serialPort.ReadBufferSize = 256;
 
-            _serialPort.DataReceived += _serialPort_DataReceived;
+            //_serialPort.DataReceived += _serialPort_DataReceived;
         }
 
-        private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private async void GetData(object sender, EventArgs e)
         {
-            
-        }
-
-        private void GetData(object sender, EventArgs e)
-        {
-            _serialPort.Open();
-            _tokenSource = new CancellationTokenSource();
-            _token = _tokenSource.Token;
-            _token.Register(() =>
+            if (readMonitor == null || readMonitor.IsCompleted)
             {
-                _serialPort.Close();
-            });
-            readMonitor = Task.Run(Read,_token);            
+                _serialPort.Open();
+                _tokenSource = new CancellationTokenSource();
+                _token = _tokenSource.Token;
+                _token.Register(() =>
+                {
+                    _serialPort.Close();
+                });
+                readMonitor = Task.Run(Read, _token);
+            }
+            else
+            {
+                await readMonitor;
+            }
         }
 
         private async Task Read()
@@ -222,6 +226,12 @@ namespace OSTIA
                 }
             }
 
+            if (_token.IsCancellationRequested)
+            {
+                _tokenSource.Cancel();
+                _tokenSource.Dispose();
+            }
+
             Global.Instance.Session.MaxPoints = index;
             SaveFileDialog saveFileDialog1 = new SaveFileDialog();
             saveFileDialog1.Filter = "IAD Image|*.iad";
@@ -240,6 +250,58 @@ namespace OSTIA
                     {
                         tw.WriteLine(Global.Instance.Validation[i].Power + "|" + Global.Instance.Validation[i].Response + "|" + Global.Instance.Validation[i].Pause + "|" + Global.Instance.Validation[i].Dial);
                     }
+                }
+            }
+        }
+
+        private void LoadFile(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog()
+            {
+                FileName = "Select a IAD file",
+                Filter = "IAD files (*.iad)|*.iad",
+                Title = "Open IAD file"
+            };
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using (TextReader tr = File.OpenText(openFileDialog1.FileName))
+                    {
+                        string? strline;
+
+                        if ((strline = tr.ReadLine()) != null)
+                        {
+                            DateTime dt = DateTime.Parse(strline);
+                        }
+
+                        if ((strline = tr.ReadLine()) != null)
+                        {
+                            Patient? _person = Patient.Parse(strline);
+                        }
+
+                        if ((strline = tr.ReadLine()) != null)
+                        {
+                            Global.Instance.Session = Exam.Parse(strline);
+                        }
+
+                        int i = 0;
+                        while ((strline = tr.ReadLine()) != null)
+                        {
+                            Inquiry _validation = Inquiry.Parse(strline);
+                            Global.Instance.Validation[i].Power = _validation.Power;
+                            Global.Instance.Validation[i].Response = _validation.Response;
+                            Global.Instance.Validation[i].Pause = _validation.Pause;
+                            Global.Instance.Validation[i].Dial = _validation.Dial;
+                            i += 1;
+                        }
+                    }
+                }
+                catch (SecurityException ex)
+                {
+                    MessageBox.Show($"Security error.\n\nError message: {ex.Message}\n\n" +
+                    $"Details:\n\n{ex.StackTrace}");
                 }
             }
         }

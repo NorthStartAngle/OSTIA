@@ -53,8 +53,9 @@
             btnGetData.Name = "btnGetData";
             btnGetData.Size = new Size(115, 41);
             btnGetData.TabIndex = 1;
-            btnGetData.Text = "Collect Data";
+            btnGetData.Text = "Display Data";
             btnGetData.UseVisualStyleBackColor = true;
+            btnGetData.Click += LoadFile;
             // 
             // btnLoadFile
             // 
@@ -62,7 +63,7 @@
             btnLoadFile.Name = "btnLoadFile";
             btnLoadFile.Size = new Size(115, 41);
             btnLoadFile.TabIndex = 2;
-            btnLoadFile.Text = "Display Data";
+            btnLoadFile.Text = "Get Data";
             btnLoadFile.UseVisualStyleBackColor = true;
             btnLoadFile.Click += GetData;
             // 
