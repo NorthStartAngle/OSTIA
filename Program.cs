@@ -1,3 +1,5 @@
+using System.Data.OleDb;
+
 namespace OSTIA
 {
     internal static class Program
@@ -11,7 +13,20 @@ namespace OSTIA
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Login());
+
+            try
+            {
+                Global.Instance.db?.connect("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=ostia.accdb;Jet OLEDB:Database Password=northstar");
+
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Database connection is failed, so you can't work more");
+                return;
+            }
+
+            (new Login()).Show();
+            Application.Run();
         }
     }
 }

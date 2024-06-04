@@ -33,13 +33,13 @@
             label2 = new Label();
             label3 = new Label();
             label4 = new Label();
-            label5 = new Label();
+            lblStatus = new Label();
             panel1 = new Panel();
-            label6 = new Label();
-            label7 = new Label();
-            txtUsername = new TextBox();
+            btnConfirm = new Button();
             txtPassword = new TextBox();
-            button1 = new Button();
+            txtUsername = new TextBox();
+            label7 = new Label();
+            label6 = new Label();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -104,22 +104,22 @@
             label4.TabIndex = 4;
             label4.Text = "All Rights Reserved";
             // 
-            // label5
+            // lblStatus
             // 
-            label5.AutoSize = true;
-            label5.BackColor = Color.Transparent;
-            label5.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label5.ForeColor = Color.DarkOrange;
-            label5.Location = new Point(239, 439);
-            label5.Name = "label5";
-            label5.Size = new Size(126, 32);
-            label5.TabIndex = 5;
-            label5.Text = "Loading ...";
+            lblStatus.BackColor = Color.Transparent;
+            lblStatus.Font = new Font("Segoe UI Semibold", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblStatus.ForeColor = Color.DarkOrange;
+            lblStatus.Location = new Point(12, 439);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(630, 32);
+            lblStatus.TabIndex = 5;
+            lblStatus.Text = "Loading ...";
+            lblStatus.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel1
             // 
             panel1.BackColor = Color.PowderBlue;
-            panel1.Controls.Add(button1);
+            panel1.Controls.Add(btnConfirm);
             panel1.Controls.Add(txtPassword);
             panel1.Controls.Add(txtUsername);
             panel1.Controls.Add(label7);
@@ -129,18 +129,44 @@
             panel1.Size = new Size(445, 507);
             panel1.TabIndex = 6;
             // 
-            // label6
+            // btnConfirm
             // 
-            label6.BackColor = Color.Transparent;
-            label6.Font = new Font("Leelawadee", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label6.Image = Resource1.user;
-            label6.ImageAlign = ContentAlignment.MiddleLeft;
-            label6.Location = new Point(67, 141);
-            label6.Name = "label6";
-            label6.Size = new Size(125, 23);
-            label6.TabIndex = 0;
-            label6.Text = "User Name";
-            label6.TextAlign = ContentAlignment.MiddleRight;
+            btnConfirm.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnConfirm.Location = new Point(270, 383);
+            btnConfirm.Name = "btnConfirm";
+            btnConfirm.Size = new Size(111, 45);
+            btnConfirm.TabIndex = 4;
+            btnConfirm.Text = "Conform";
+            btnConfirm.UseVisualStyleBackColor = true;
+            btnConfirm.Click += btnConfirm_Click;
+            // 
+            // txtPassword
+            // 
+            txtPassword.AcceptsReturn = true;
+            txtPassword.BackColor = SystemColors.Info;
+            txtPassword.BorderStyle = BorderStyle.FixedSingle;
+            txtPassword.Font = new Font("Segoe UI", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtPassword.Location = new Point(213, 217);
+            txtPassword.MaxLength = 20;
+            txtPassword.Name = "txtPassword";
+            txtPassword.PasswordChar = '*';
+            txtPassword.Size = new Size(168, 30);
+            txtPassword.TabIndex = 3;
+            txtPassword.TextAlign = HorizontalAlignment.Center;
+            txtPassword.UseSystemPasswordChar = true;
+            // 
+            // txtUsername
+            // 
+            txtUsername.AcceptsReturn = true;
+            txtUsername.BackColor = SystemColors.Info;
+            txtUsername.BorderStyle = BorderStyle.FixedSingle;
+            txtUsername.Font = new Font("Segoe UI", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtUsername.Location = new Point(213, 137);
+            txtUsername.MaxLength = 20;
+            txtUsername.Name = "txtUsername";
+            txtUsername.Size = new Size(168, 30);
+            txtUsername.TabIndex = 2;
+            txtUsername.TextAlign = HorizontalAlignment.Center;
             // 
             // label7
             // 
@@ -155,45 +181,18 @@
             label7.Text = "Password  ";
             label7.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // txtUsername
+            // label6
             // 
-            txtUsername.AcceptsReturn = true;
-            txtUsername.BackColor = SystemColors.Info;
-            txtUsername.BorderStyle = BorderStyle.FixedSingle;
-            txtUsername.Font = new Font("Segoe UI", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtUsername.Location = new Point(213, 137);
-            txtUsername.MaxLength = 20;
-            txtUsername.Name = "txtUsername";
-            txtUsername.Size = new Size(168, 30);
-            txtUsername.TabIndex = 2;
-            txtUsername.Text = "ptm";
-            txtUsername.TextAlign = HorizontalAlignment.Center;
-            // 
-            // txtPassword
-            // 
-            txtPassword.AcceptsReturn = true;
-            txtPassword.BackColor = SystemColors.Info;
-            txtPassword.BorderStyle = BorderStyle.FixedSingle;
-            txtPassword.Font = new Font("Segoe UI", 12.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtPassword.Location = new Point(213, 217);
-            txtPassword.MaxLength = 20;
-            txtPassword.Name = "txtPassword";
-            txtPassword.PasswordChar = '*';
-            txtPassword.Size = new Size(168, 30);
-            txtPassword.TabIndex = 3;
-            txtPassword.Text = "ptm";
-            txtPassword.TextAlign = HorizontalAlignment.Center;
-            txtPassword.UseSystemPasswordChar = true;
-            // 
-            // button1
-            // 
-            button1.Font = new Font("Segoe UI Semibold", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            button1.Location = new Point(270, 383);
-            button1.Name = "button1";
-            button1.Size = new Size(111, 45);
-            button1.TabIndex = 4;
-            button1.Text = "Conform";
-            button1.UseVisualStyleBackColor = true;
+            label6.BackColor = Color.Transparent;
+            label6.Font = new Font("Leelawadee", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label6.Image = Resource1.user;
+            label6.ImageAlign = ContentAlignment.MiddleLeft;
+            label6.Location = new Point(67, 141);
+            label6.Name = "label6";
+            label6.Size = new Size(125, 23);
+            label6.TabIndex = 0;
+            label6.Text = "User Name";
+            label6.TextAlign = ContentAlignment.MiddleRight;
             // 
             // Login
             // 
@@ -202,7 +201,7 @@
             BackColor = Color.Crimson;
             ClientSize = new Size(1091, 491);
             Controls.Add(panel1);
-            Controls.Add(label5);
+            Controls.Add(lblStatus);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -210,10 +209,8 @@
             Controls.Add(lbl_Mark);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "Login";
-            ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Welcome to you in OSTIA!";
-            TopMost = true;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
@@ -227,11 +224,11 @@
         private Label label2;
         private Label label3;
         private Label label4;
-        private Label label5;
+        private Label lblStatus;
         private Panel panel1;
         private Label label6;
         private Label label7;
-        private Button button1;
+        private Button btnConfirm;
         private TextBox txtPassword;
         private TextBox txtUsername;
     }

@@ -28,51 +28,52 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
-            button4 = new Button();
+            btnNewExam = new Button();
+            btnGetData = new Button();
+            btnLoadFile = new Button();
+            btnTextualSum = new Button();
             button5 = new Button();
             button6 = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
-            // button1
+            // btnNewExam
             // 
-            button1.Location = new Point(23, 23);
-            button1.Name = "button1";
-            button1.Size = new Size(115, 41);
-            button1.TabIndex = 0;
-            button1.Text = "New Assessment";
-            button1.UseVisualStyleBackColor = true;
+            btnNewExam.Location = new Point(23, 23);
+            btnNewExam.Name = "btnNewExam";
+            btnNewExam.Size = new Size(115, 41);
+            btnNewExam.TabIndex = 0;
+            btnNewExam.Text = "New Assessment";
+            btnNewExam.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // btnGetData
             // 
-            button2.Location = new Point(217, 23);
-            button2.Name = "button2";
-            button2.Size = new Size(115, 41);
-            button2.TabIndex = 1;
-            button2.Text = "Collect Data";
-            button2.UseVisualStyleBackColor = true;
+            btnGetData.Location = new Point(217, 23);
+            btnGetData.Name = "btnGetData";
+            btnGetData.Size = new Size(115, 41);
+            btnGetData.TabIndex = 1;
+            btnGetData.Text = "Collect Data";
+            btnGetData.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // btnLoadFile
             // 
-            button3.Location = new Point(411, 23);
-            button3.Name = "button3";
-            button3.Size = new Size(115, 41);
-            button3.TabIndex = 2;
-            button3.Text = "Display Data";
-            button3.UseVisualStyleBackColor = true;
+            btnLoadFile.Location = new Point(411, 23);
+            btnLoadFile.Name = "btnLoadFile";
+            btnLoadFile.Size = new Size(115, 41);
+            btnLoadFile.TabIndex = 2;
+            btnLoadFile.Text = "Display Data";
+            btnLoadFile.UseVisualStyleBackColor = true;
+            btnLoadFile.Click += GetData;
             // 
-            // button4
+            // btnTextualSum
             // 
-            button4.Location = new Point(605, 23);
-            button4.Name = "button4";
-            button4.Size = new Size(115, 41);
-            button4.TabIndex = 3;
-            button4.Text = "Print Data";
-            button4.UseVisualStyleBackColor = true;
+            btnTextualSum.Location = new Point(605, 23);
+            btnTextualSum.Name = "btnTextualSum";
+            btnTextualSum.Size = new Size(115, 41);
+            btnTextualSum.TabIndex = 3;
+            btnTextualSum.Text = "Print Data";
+            btnTextualSum.UseVisualStyleBackColor = true;
             // 
             // button5
             // 
@@ -104,10 +105,10 @@
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
             tableLayoutPanel1.Controls.Add(button6, 6, 0);
             tableLayoutPanel1.Controls.Add(button5, 5, 0);
-            tableLayoutPanel1.Controls.Add(button4, 4, 0);
-            tableLayoutPanel1.Controls.Add(button3, 3, 0);
-            tableLayoutPanel1.Controls.Add(button2, 2, 0);
-            tableLayoutPanel1.Controls.Add(button1, 1, 0);
+            tableLayoutPanel1.Controls.Add(btnTextualSum, 4, 0);
+            tableLayoutPanel1.Controls.Add(btnLoadFile, 3, 0);
+            tableLayoutPanel1.Controls.Add(btnGetData, 2, 0);
+            tableLayoutPanel1.Controls.Add(btnNewExam, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Top;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -133,10 +134,10 @@
 
         #endregion
 
-        private Button button1;
-        private Button button2;
-        private Button button3;
-        private Button button4;
+        private Button btnNewExam;
+        private Button btnGetData;
+        private Button btnLoadFile;
+        private Button btnTextualSum;
         private Button button5;
         private Button button6;
         private TableLayoutPanel tableLayoutPanel1;
