@@ -152,6 +152,7 @@
             txtPassword.PasswordChar = '*';
             txtPassword.Size = new Size(168, 30);
             txtPassword.TabIndex = 3;
+            txtPassword.Text = "123";
             txtPassword.TextAlign = HorizontalAlignment.Center;
             txtPassword.UseSystemPasswordChar = true;
             // 
@@ -166,6 +167,7 @@
             txtUsername.Name = "txtUsername";
             txtUsername.Size = new Size(168, 30);
             txtUsername.TabIndex = 2;
+            txtUsername.Text = "admin";
             txtUsername.TextAlign = HorizontalAlignment.Center;
             // 
             // label7
@@ -211,6 +213,7 @@
             Name = "Login";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Welcome to you in OSTIA!";
+            FormClosing += Login_FormClosing;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);

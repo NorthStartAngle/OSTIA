@@ -14,6 +14,7 @@ namespace OSTIA
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
+            
             try
             {
                 Global.Instance.db?.connect("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=ostia.accdb;Jet OLEDB:Database Password=northstar");

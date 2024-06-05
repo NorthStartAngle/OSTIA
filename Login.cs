@@ -94,7 +94,7 @@ namespace OSTIA
             else
             {
                 lblStatus.Text = p;
-                txtUsername.Text = "";txtPassword.Text = "";
+                txtUsername.Text = ""; txtPassword.Text = "";
                 txtUsername.Focus();
 
             }
@@ -129,14 +129,14 @@ namespace OSTIA
                             Global.Instance.loginUser.password = password;
                             Global.Instance.loginUser.access_level = access_level;
 
-                            
+
                             break;
                         }
 
-                        
-                        Manager a =new Manager();
-                        a.Show();
 
+                        Manager a = new Manager();
+                        a.Show();
+                        closer = DialogResult.Ignore;
                         this.Close();
 
                     }
@@ -152,6 +152,30 @@ namespace OSTIA
 
                 reader?.Close();
             });
+        }
+
+        static DialogResult closer = 0;
+        
+        private void Login_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(closer == 0)
+            {
+                DialogResult result = MessageBox.Show(this, "Do you want to quit the application?.",
+                                   "Quitting?", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Yes)
+                {
+                    closer = result;
+                    Application.Exit();
+                }
+                else
+                {
+                    e.Cancel = true;
+                    closer = 0;
+                }
+            }else if(closer != DialogResult.Ignore)
+            {
+                Application.Exit();return;
+            }            
         }
     }
 }

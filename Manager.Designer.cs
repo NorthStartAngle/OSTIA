@@ -28,109 +28,117 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnNewExam = new Button();
-            btnGetData = new Button();
-            btnLoadFile = new Button();
-            btnTextualSum = new Button();
-            button5 = new Button();
-            button6 = new Button();
-            tableLayoutPanel1 = new TableLayoutPanel();
-            tableLayoutPanel1.SuspendLayout();
+            menuStrip1 = new MenuStrip();
+            fileToolStripMenuItem = new ToolStripMenuItem();
+            mnuOpenFile = new ToolStripMenuItem();
+            printToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            mnuExit = new ToolStripMenuItem();
+            operatorToolStripMenuItem = new ToolStripMenuItem();
+            mnuAssessment = new ToolStripMenuItem();
+            mnuGather = new ToolStripMenuItem();
+            toolsToolStripMenuItem = new ToolStripMenuItem();
+            otherToolStripMenuItem = new ToolStripMenuItem();
+            helpToolStripMenuItem = new ToolStripMenuItem();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
-            // btnNewExam
+            // menuStrip1
             // 
-            btnNewExam.Location = new Point(23, 23);
-            btnNewExam.Name = "btnNewExam";
-            btnNewExam.Size = new Size(115, 41);
-            btnNewExam.TabIndex = 0;
-            btnNewExam.Text = "New Assessment";
-            btnNewExam.UseVisualStyleBackColor = true;
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, operatorToolStripMenuItem, toolsToolStripMenuItem, helpToolStripMenuItem });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(784, 24);
+            menuStrip1.TabIndex = 8;
+            menuStrip1.Text = "menuStrip1";
             // 
-            // btnGetData
+            // fileToolStripMenuItem
             // 
-            btnGetData.Location = new Point(217, 23);
-            btnGetData.Name = "btnGetData";
-            btnGetData.Size = new Size(115, 41);
-            btnGetData.TabIndex = 1;
-            btnGetData.Text = "Display Data";
-            btnGetData.UseVisualStyleBackColor = true;
-            btnGetData.Click += LoadFile;
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuOpenFile, printToolStripMenuItem, toolStripSeparator1, mnuExit });
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new Size(37, 20);
+            fileToolStripMenuItem.Text = "File";
             // 
-            // btnLoadFile
+            // mnuOpenFile
             // 
-            btnLoadFile.Location = new Point(411, 23);
-            btnLoadFile.Name = "btnLoadFile";
-            btnLoadFile.Size = new Size(115, 41);
-            btnLoadFile.TabIndex = 2;
-            btnLoadFile.Text = "Get Data";
-            btnLoadFile.UseVisualStyleBackColor = true;
-            btnLoadFile.Click += GetData;
+            mnuOpenFile.Name = "mnuOpenFile";
+            mnuOpenFile.Size = new Size(180, 22);
+            mnuOpenFile.Text = "Open";
+            mnuOpenFile.Click += mnuOpenFile_Click;
             // 
-            // btnTextualSum
+            // printToolStripMenuItem
             // 
-            btnTextualSum.Location = new Point(605, 23);
-            btnTextualSum.Name = "btnTextualSum";
-            btnTextualSum.Size = new Size(115, 41);
-            btnTextualSum.TabIndex = 3;
-            btnTextualSum.Text = "Print Data";
-            btnTextualSum.UseVisualStyleBackColor = true;
+            printToolStripMenuItem.Name = "printToolStripMenuItem";
+            printToolStripMenuItem.Size = new Size(180, 22);
+            printToolStripMenuItem.Text = "Print";
             // 
-            // button5
+            // toolStripSeparator1
             // 
-            button5.Location = new Point(799, 23);
-            button5.Name = "button5";
-            button5.Size = new Size(115, 41);
-            button5.TabIndex = 4;
-            button5.Text = "Others";
-            button5.UseVisualStyleBackColor = true;
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(177, 6);
             // 
-            // button6
+            // mnuExit
             // 
-            button6.Location = new Point(993, 23);
-            button6.Name = "button6";
-            button6.Size = new Size(94, 41);
-            button6.TabIndex = 5;
-            button6.Text = "Help";
-            button6.UseVisualStyleBackColor = true;
+            mnuExit.Name = "mnuExit";
+            mnuExit.Size = new Size(180, 22);
+            mnuExit.Text = "Exit";
             // 
-            // tableLayoutPanel1
+            // operatorToolStripMenuItem
             // 
-            tableLayoutPanel1.ColumnCount = 7;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
-            tableLayoutPanel1.Controls.Add(button6, 6, 0);
-            tableLayoutPanel1.Controls.Add(button5, 5, 0);
-            tableLayoutPanel1.Controls.Add(btnTextualSum, 4, 0);
-            tableLayoutPanel1.Controls.Add(btnLoadFile, 3, 0);
-            tableLayoutPanel1.Controls.Add(btnGetData, 2, 0);
-            tableLayoutPanel1.Controls.Add(btnNewExam, 1, 0);
-            tableLayoutPanel1.Dock = DockStyle.Top;
-            tableLayoutPanel1.Location = new Point(0, 0);
-            tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.Padding = new Padding(0, 20, 0, 20);
-            tableLayoutPanel1.RowCount = 1;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new Size(1090, 88);
-            tableLayoutPanel1.TabIndex = 7;
+            operatorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuAssessment, mnuGather });
+            operatorToolStripMenuItem.Name = "operatorToolStripMenuItem";
+            operatorToolStripMenuItem.Size = new Size(66, 20);
+            operatorToolStripMenuItem.Text = "Operator";
+            // 
+            // mnuAssessment
+            // 
+            mnuAssessment.Name = "mnuAssessment";
+            mnuAssessment.Size = new Size(180, 22);
+            mnuAssessment.Text = "Assesement";
+            // 
+            // mnuGather
+            // 
+            mnuGather.Name = "mnuGather";
+            mnuGather.Size = new Size(180, 22);
+            mnuGather.Text = "Gather";
+            mnuGather.Click += mnuGather_Click;
+            // 
+            // toolsToolStripMenuItem
+            // 
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { otherToolStripMenuItem });
+            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            toolsToolStripMenuItem.Size = new Size(46, 20);
+            toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // otherToolStripMenuItem
+            // 
+            otherToolStripMenuItem.Name = "otherToolStripMenuItem";
+            otherToolStripMenuItem.Size = new Size(109, 22);
+            otherToolStripMenuItem.Text = "Others";
+            // 
+            // helpToolStripMenuItem
+            // 
+            helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            helpToolStripMenuItem.Size = new Size(44, 20);
+            helpToolStripMenuItem.Text = "Help";
             // 
             // Manager
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1090, 661);
-            Controls.Add(tableLayoutPanel1);
+            ClientSize = new Size(784, 661);
+            Controls.Add(menuStrip1);
+            IsMdiContainer = true;
+            MainMenuStrip = menuStrip1;
             MinimumSize = new Size(800, 700);
             Name = "Manager";
             Text = "OSTIA v1.01";
             WindowState = FormWindowState.Maximized;
-            tableLayoutPanel1.ResumeLayout(false);
+            FormClosing += Manager_FormClosing;
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -142,5 +150,19 @@
         private Button button5;
         private Button button6;
         private TableLayoutPanel tableLayoutPanel1;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem operatorToolStripMenuItem;
+        private ToolStripMenuItem toolsToolStripMenuItem;
+        private ToolStripMenuItem helpToolStripMenuItem;
+        private ToolStripMenuItem mnuOpenFile;
+        private ToolStripMenuItem printToolStripMenuItem;
+        private ToolStripMenuItem exitToolStripMenuItem;
+        private ToolStripMenuItem assesementToolStripMenuItem;
+        private ToolStripMenuItem mnuGather;
+        private ToolStripMenuItem mnuExit;
+        private ToolStripMenuItem mnuAssessment;
+        private ToolStripMenuItem otherToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
     }
 }
