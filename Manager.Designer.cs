@@ -40,6 +40,7 @@
             toolsToolStripMenuItem = new ToolStripMenuItem();
             otherToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
+            mnuAbout = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -118,9 +119,17 @@
             // 
             // helpToolStripMenuItem
             // 
+            helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuAbout });
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             helpToolStripMenuItem.Size = new Size(44, 20);
             helpToolStripMenuItem.Text = "Help";
+            // 
+            // mnuAbout
+            // 
+            mnuAbout.Name = "mnuAbout";
+            mnuAbout.Size = new Size(180, 22);
+            mnuAbout.Text = "About";
+            mnuAbout.Click += mnuAbout_Click;
             // 
             // Manager
             // 
@@ -164,5 +173,6 @@
         private ToolStripMenuItem mnuAssessment;
         private ToolStripMenuItem otherToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem mnuAbout;
     }
 }

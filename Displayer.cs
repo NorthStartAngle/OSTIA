@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,7 +14,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace OSTIA
 {
-    internal class VIEW_WINDOW
+    class VIEW_WINDOW
     {
         private VIEW_WINDOW? _parent = null;
         private Point sPt;
@@ -215,21 +217,42 @@ namespace OSTIA
             g.DrawImage(bi, vw.PT(x, y));
         }
 
-        public void DrawGraph()
+        public void DrawGraph(bool temp = false)
         {
-
-            int el = Global.Instance.Session.MaxPoints;
+            
+            int el=3600;
             int sl = 0;
             int CT = 0;
-            int[] na = new int[3601];
             bool WholeNum = true;
-            
+            int[] na = new int[3601];
+
+            tabControl1.SelectTab(1);
+
+            if (!temp)
+            {
+                el = Global.Instance.Session.MaxPoints;
+            }
+
+            lblTooltip.Visible = false;
             //---Start
+
+            /*sl: (0~15min) Start Location
+            el: End locattion
+
+            sl = sl * 240;
+            el = el * 240;*/
+
+            Point pt1 = PointToScreen(new Point(0, 0));
+            Point pt2 =tabPage2.PointToScreen(new Point(0, 0));
+            Rectangle rt = Screen.FromControl(this).Bounds;
+            Size sz = new Size(rt.Width - (pt2.X-pt1.X)*2-10, rt.Height - (pt2.Y-pt1.Y)-100);
+
             VIEW_WINDOW vw = new VIEW_WINDOW();
-            vw.setVIEW(0,0,tabPage2.Width,tabPage2.Height).setWINDOW(0,0,640,480);
+            vw.setVIEW(0,0, sz.Width,sz.Height).setWINDOW(0,0,640,480);
 
+            Bitmap bm = new Bitmap(tabPage2.Width, tabPage2.Height); 
 
-            using (Graphics gr = tabPage2.CreateGraphics())// Bitmap bm = new Bitmap(640, 480); Graphics.FromImage(bm)
+            using (Graphics gr = Graphics.FromImage(bm))// Bitmap bm = new Bitmap(640, 480); Graphics.FromImage(bm)
             {
                 gr.Clear(Color.Black);
                 /*RectangleF rect = new RectangleF(0f, 480.0f, 640f, 0f);
@@ -246,63 +269,69 @@ namespace OSTIA
 
                 _drawRect(vw,gr, new Pen(Color.White, 2), 38, 48, 639, 402);
 
+                double n = 0.0D;
                 for (int y = 400; y >= 50; y -= 44)
                 {
-                    string a = (Math.Abs(((y - 400) / 44)) / 5).ToString() + "-";
-                    _drawText(vw,gr,a, 45 - a.Length * 8, y + 6, Color.White,new Font("Arial", 12));
+                    n = (double)(y - 400) / (44*5);
+                    string a = Math.Round(Math.Abs(n),3).ToString();
+                    _drawText(vw,gr,a, 26, y + 5, Color.White,new Font("Arial", 12));
 
                     _drawLine(vw,gr,new Pen(Color.Blue, 2) { DashStyle = DashStyle.DashDot }, 639, y + 9, 38, y + 9);
                 }
 
                 _drawText(vw,gr,"W /cm", 5, 250, Color.Yellow, new Font("Arial", 12), true);
-                _drawText(vw,gr,"2", 1, 210, Color.Yellow, new Font("Arial", 12), true);
+                _drawText(vw,gr,"2", 5, 210, Color.Yellow, new Font("Arial", 12), true);
 
-                for (int x = 36; x <= 638; x += 600 / (el - sl) * 240)
+                CT = sl / 240;
+                if (sl == 0) CT = 0;
+                
+                for (int x = 36; x <= 638; x += 600 * 240 / (el - sl) )
                 {
-                    var t = $"{CT}-";
+                    var t = $"- {CT}";
                     if (!WholeNum)
                     {
-                        if (t.Length > 3) t = t.Substring(0, 3);
+                        if (t.Length > 4) t = "-        "+t.Substring(0, 3);
                     }
-                    _drawText(vw,gr, t, x - 2, 390 + t.Length * 7, Color.White, new Font("Arial", 12), true);
+                    _drawText(vw,gr, t, x - 2, 410 , Color.White, new Font("Arial", 12), true);
                     CT += 1;
                 }
-                _drawText(vw,gr, "T I M E", 315, 410, Color.Yellow, new Font("Arial", 12));
-                _drawTextJustify(vw,gr, "  OSTIA   ", Color.Yellow,0,0,150,20, new Font("Arial", 12));
+   
+                _drawText(vw,gr, "T I M E", 315, 430, Color.Yellow, new Font("Arial", 12));
+                _drawTextJustify(vw,gr, "  OSTIA   ", Color.LightCyan,10,10,150,30, new Font("Arial", 20));
 
-                _drawText(vw,gr, "Case #", 320, 0, Color.White, new Font("Arial", 12));
-                _drawText(vw, gr,  $"{Global.Instance.Session.CaseNumber}", 360, 0, Color.Yellow, new Font("Arial", 12));
-                _drawText(vw, gr,  "Test Time: ", 478, 0, Color.White, new Font("Arial", 12));
-                _drawText(vw, gr, Global.Instance.Session.dt.ToString("yyyy-M-d h:mm:s"), 545, 0, Color.Yellow, new Font("Arial", 12));
+                _drawText(vw,gr, "Case #", 320, 10, Color.White, new Font("Arial", 12));
+                //_drawText(vw, gr,  $"{Global.Instance.Session.CaseNumber}", 360, 0, Color.Yellow, new Font("Arial", 12));
+                _drawText(vw, gr,  "Test Time: ", 478, 10, Color.White, new Font("Arial", 12));
+                //_drawText(vw, gr, Global.Instance.Session.dt.ToString("yyyy-M-d h:mm:s"), 545, 0, Color.Yellow, new Font("Arial", 12));
 
-                _drawText(vw, gr,  "Sample Rate: ", 320, 10, Color.White, new Font("Arial", 12));
-                _drawText(vw, gr,  $"{Global.Instance.Session.SampleRate}", 397, 10, Color.White, new Font("Arial", 12));
-                _drawText(vw, gr,  "PPS:", 478, 10, Color.White, new Font("Arial", 12));
-                _drawText(vw, gr,  $"{Global.Instance.Session.SampFreq}", 506, 10, Color.White, new Font("Arial", 12));
+                _drawText(vw, gr,  "Sample Rate: ", 320, 20, Color.White, new Font("Arial", 12));
+                //_drawText(vw, gr,  $"{Global.Instance.Session.SampleRate}", 397, 10, Color.White, new Font("Arial", 12));
+                _drawText(vw, gr,  "PPS:", 478, 20, Color.White, new Font("Arial", 12));
+                //_drawText(vw, gr,  $"{Global.Instance.Session.SampFreq}", 506, 10, Color.White, new Font("Arial", 12));
                 _drawText(vw, gr,  "D: ", 565, 10, Color.White, new Font("Arial", 12));
-                _drawText(vw, gr,  $"{Global.Instance.Session.SampDuty}", 581, 10, Color.White, new Font("Arial", 12));
+                //_drawText(vw, gr,  $"{Global.Instance.Session.SampDuty}", 581, 10, Color.White, new Font("Arial", 12));
                 _drawText(vw, gr,  "f: ", 615, 10, Color.White, new Font("Arial", 12));
-                _drawText(vw, gr,  $"{Global.Instance.Session.SampBand}", 631, 10, Color.White, new Font("Arial", 12));
+                //_drawText(vw, gr,  $"{Global.Instance.Session.SampBand}", 631, 10, Color.White, new Font("Arial", 12));
 
                 _drawFillRect(vw,gr, Color.Blue, 150, 32, 160, 38);
                 _drawText(vw, gr,  "Output Control", 165, 30, Color.White, new Font("Arial", 12));
 
                 _drawFillRect(vw, gr, Color.White, 270, 32, 280, 38);
-                _drawText(vw, gr, "Power", 285, 30, Color.White, new Font("Arial", 12));
+                _drawText(vw, gr, "Power", 290, 30, Color.White, new Font("Arial", 12));
 
-                _drawFillRect(vw, gr, Color.Brown, 335, 32, 345, 38);
-                _drawText(vw, gr, "Patient Response", 350, 30, Color.White, new Font("Arial", 12));
+                _drawFillRect(vw, gr, Color.Brown, 370, 32, 380, 38);
+                _drawText(vw, gr, "Patient Response", 390, 30, Color.White, new Font("Arial", 12));
 
-                _drawFillRect(vw, gr,  Color.Red, 485, 28, 505, 38);
+                _drawFillRect(vw, gr,  Color.Red, 500, 32, 510, 38);
                 _drawText(vw, gr,  "Pause ON", 515, 30, Color.White, new Font("Arial", 12));
 
-                _drawText(vw,gr,"ESC = Exit       S=Scale     P=Exam. Parameters", 200, 430, Color.Yellow, new Font("Arial", 12));
-
-                _drawTextJustify(vw,gr, " c Copyright 1994-2002                              ", Color.White,20, 470,620, 20, new Font("Arial", 12));
-                _drawCircle(vw, gr, new Pen(Color.Beige), 29, 475, 6, true);
+                _drawTextJustify(vw,gr, " @Copyright 1994-2002                              ", Color.White,20, 460,620, 20, new Font("Arial", 12));
+                //_drawCircle(vw, gr, new Pen(Color.Beige), 29, 475, 6, true);
 
                 VIEW_WINDOW vw1 = new VIEW_WINDOW(vw);
                 vw1.setVIEW(40, 40, 638,440).setWINDOW(sl, 40, el, 440);
+
+                goto jump1;
 
                 for (int x = sl; x <= el - 2; x++)
                 {
@@ -391,7 +420,13 @@ namespace OSTIA
                     _drawLine(vw1, gr, new Pen(Color.LightBlue, 2), pt.X, pt.Y, x, na[x]);
                     pt.X = x; pt.Y = na[x];
                 }
+
+                jump1:
+                ;
             }
+
+            tabPage2.BackgroundImage = bm;
+            tabPage2.BackgroundImageLayout = ImageLayout.None;
         }
     }
 }

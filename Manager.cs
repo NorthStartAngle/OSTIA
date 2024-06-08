@@ -25,6 +25,8 @@ namespace OSTIA
         private CancellationToken _token;
         private Displayer? display = null;
 
+        public static Manager shared = null;
+
         CancellationTokenSource _tokenSource1;
         public Manager()
         {
@@ -42,6 +44,8 @@ namespace OSTIA
             _serialPort.ReadTimeout = 500;
             _serialPort.WriteTimeout = 500;
             _serialPort.ReadBufferSize = 256;
+
+            shared = this;
         }
 
 
@@ -159,10 +163,7 @@ namespace OSTIA
                                 repeater += 1;
                             }
                         }
-                        else
-                        {
-                            await Task.Delay(10, _token).ConfigureAwait(false);
-                        }
+                        await Task.Delay(10, _token).ConfigureAwait(false);
                     }
 
                     if (repeater == 360)
@@ -197,10 +198,7 @@ namespace OSTIA
                                 repeater += 1;
                             }
                         }
-                        else
-                        {
-                            await Task.Delay(10, _token).ConfigureAwait(false);
-                        }
+                        await Task.Delay(10, _token).ConfigureAwait(false);
                     }
 
                     if (repeater == 360)
@@ -235,10 +233,7 @@ namespace OSTIA
                                 repeater += 1;
                             }
                         }
-                        else
-                        {
-                            await Task.Delay(10, _token).ConfigureAwait(false);
-                        }
+                        await Task.Delay(10, _token).ConfigureAwait(false);
                     }
 
                     if (repeater == 360)
@@ -271,10 +266,7 @@ namespace OSTIA
                                 repeater += 1;
                             }
                         }
-                        else
-                        {
-                            await Task.Delay(10, _token).ConfigureAwait(false);
-                        }
+                        await Task.Delay(10, _token).ConfigureAwait(false);
                     }
 
                     if (repeater == 360)
@@ -360,7 +352,7 @@ namespace OSTIA
             }
         }
 
-        private void mnuGather_Click(object sender, EventArgs e)
+        public void mnuGather_Click(object sender, EventArgs e)
         {
             display = new Displayer();
             display.MdiParent = this;
@@ -407,6 +399,12 @@ namespace OSTIA
 
         private void mnuOpenFile_Click(object sender, EventArgs e)
         {
+            display = new Displayer();
+            display.MdiParent = this;
+            display.WindowState = FormWindowState.Maximized;
+            display.Show();
+            display.startLog();
+
             OpenFileDialog openFileDialog1 = new OpenFileDialog()
             {
                 FileName = "Select a IAD file",
@@ -416,13 +414,13 @@ namespace OSTIA
 
             if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
-                OpenFile(false,openFileDialog1.FileName);
+                OpenFile(false, openFileDialog1.FileName);
             }
         }
 
-        public void OpenFile(bool inMemory, string filePath="")
+        public void OpenFile(bool inMemory, string filePath = "")
         {
-            if(!inMemory)
+            if (!inMemory)
             {
                 try
                 {
@@ -466,6 +464,30 @@ namespace OSTIA
 
             display?.startDrawing();
 
+        }
+
+        private void mnuAbout_Click(object sender, EventArgs e)
+        {
+            display = new Displayer();
+            display.MdiParent = this;
+            display.WindowState = FormWindowState.Maximized;
+            display.Show();
+
+            Task.Delay(1500).ContinueWith(_ =>
+            {
+                if(display.InvokeRequired)
+                {
+                    Invoke((MethodInvoker)delegate ()
+                    {
+                        display?.DrawGraph(true);
+                    });                    
+                }
+                else
+                {
+                    display?.DrawGraph(true);
+                }
+                
+            }).ConfigureAwait(false);            
         }
     }
 }

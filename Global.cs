@@ -8,12 +8,36 @@ using System.Windows.Forms;
 
 namespace OSTIA
 {
+    public static class Prompt
+    {
+        public static string ShowDialog(string text, string caption)
+        {
+            Form prompt = new Form()
+            {
+                Width = 500,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = caption,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            Label textLabel = new Label() { Left = 50, Top = 20, Text = text };
+            TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
+            Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
+            confirmation.Click += (sender, e) => { prompt.Close(); };
+            prompt.Controls.Add(textBox);
+            prompt.Controls.Add(confirmation);
+            prompt.Controls.Add(textLabel);
+            prompt.AcceptButton = confirmation;
+
+            return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
+        }
+    }
+
     public struct User
     {
         public string Name { get; set; }
         public string Password { get; set; }
         public string Access { get; set; }
-
     }
         
     public struct Inquiry
@@ -48,7 +72,7 @@ namespace OSTIA
         }
 
     }
-
+    
     public struct Exam
     {
         public int MaxPoints;
@@ -133,16 +157,22 @@ namespace OSTIA
 
     internal class Global
     {
-        private static Global _instance = null;
+        private static Global? _instance = null;
         public dbAccess? db = null;
         public users? loginUser = null;
         public Inquiry[] Validation = new Inquiry[3600];
         public Exam Session;
         public DateTime Machine;
         public Patient Person;
+
+        public string OfficeName;
+        public string OfficeAddr1;
+        public string OfficeAddr2;
+
         public Global()
         {
             db = new dbAccess();
+            _instance = null;
         }
 
         public static Global Instance
