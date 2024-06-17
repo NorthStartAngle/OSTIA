@@ -1,29 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.IO.Ports;
-using System.Linq;
-using System.Net.Sockets;
+﻿using System.IO.Ports;
 using System.Security;
+using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace OSTIA
 {
     public partial class Manager : Form
     {
         private SerialPort _serialPort;
-        private Task? readMonitor = null;
+        private Task readMonitor = null;
         private CancellationTokenSource _tokenSource = new CancellationTokenSource();
         private CancellationToken _token;
-        private Displayer? display = null;
+        private Displayer display = null;
 
         public static Manager shared = null;
 
@@ -33,7 +21,7 @@ namespace OSTIA
             InitializeComponent();
 
             _serialPort = new SerialPort();
-            _serialPort.PortName = "COM1";
+            _serialPort.PortName = "COM3";
             _serialPort.BaudRate = 1200;
             _serialPort.Parity = Parity.None;
             _serialPort.DataBits = 8;
@@ -46,56 +34,37 @@ namespace OSTIA
             _serialPort.ReadBufferSize = 256;
 
             shared = this;
+
         }
 
-
-        //Task readMonitor = Task.Run(() => test1(_token1), _token1);
-        private async Task test1(CancellationToken token)
+        private void Displayer_FormClosed(object? sender, FormClosedEventArgs e)
         {
-            /*while (!token.IsCancellationRequested)
-            {
-                index += 1;
-                await Task.Delay(1000, _token).ConfigureAwait(true);
-
-                if (index > 5)
-                {
-
-                    _tokenSource1.Cancel();
-                }
-            }
-
-            Console.WriteLine("Test1 was finished");*/
+            display = null;
         }
+
         static DateTime stDt;
         private async Task Read()
         {
+            int index = 0;
             int seg;
             bool drflag = false;
 
-            this.Invoke(new MethodInvoker(
-                delegate ()
-                {
-                    display?.appendSeg("Waiting for start bit");
-                })
-            );
+            display?.appendSeg("Waiting for start bit");
 
+            stDt = DateTime.Now;
             do
             {
                 try
                 {
                     var span = DateTime.Now - stDt;
-                    if (span.TotalSeconds > 3)
+                    if (span.TotalSeconds > 10)
                     {
-                        this.Invoke(new MethodInvoker(
-                            delegate ()
-                            {
-                                display?.appendLog("Timeout of waiting. quit");
-                            })
-                        );
+                        display?.appendLog("Timeout of waiting. quit");
                         throw new TimeoutException();
                     }
                     if (_serialPort.BytesToRead > 0)
                     {
+                        stDt = DateTime.Now;
                         seg = _serialPort.ReadByte();
                         var binary = Convert.ToString(seg, 2);
                         var strbinary = new string('0', 8 - binary.Length) + binary;
@@ -104,12 +73,7 @@ namespace OSTIA
                         {
                             if (strbinary.Substring(4, 1) == "1")
                             {
-                                this.Invoke(new MethodInvoker(
-                                    delegate ()
-                                    {
-                                        display?.appendLog("Accept starting bit");
-                                    })
-                                );
+                                display?.appendLog("Accept starting bit");
                                 drflag = true;
                             }
                         }
@@ -124,28 +88,22 @@ namespace OSTIA
 
             } while (!_token.IsCancellationRequested & !drflag);
 
-            int index = 0;
+
             int repeater = 0;
 
-            this.Invoke(new MethodInvoker(
-                delegate ()
-                {
-                    display?.appendPart("Start receiving data in total 3600");
-                })
-            );
+            if (!_token.IsCancellationRequested)
+            {
+                display?.appendPart("Start receiving data in total 3600");
+            }
 
             while (!_token.IsCancellationRequested & index < 3600)
             {
-                this.Invoke(new MethodInvoker(
-                    delegate ()
-                    {
-                        display?.appendSeg($"Receiving data as index {index + 1}");
-                    })
-                );
+                display?.appendSeg($"Receiving data as index {index + 1}");
 
-                try
+                //
+                while (!_token.IsCancellationRequested & repeater < 360)
                 {
-                    while (!_token.IsCancellationRequested & repeater < 360)
+                    try
                     {
                         if (_serialPort.BytesToRead > 0)
                         {
@@ -163,24 +121,32 @@ namespace OSTIA
                                 repeater += 1;
                             }
                         }
-                        await Task.Delay(10, _token).ConfigureAwait(false);
+                        else
+                        {
+                            repeater += 1;
+                        }
+                        await Task.Delay(5, _token).ConfigureAwait(false);
                     }
-
-                    if (repeater == 360)
+                    catch (Exception)
                     {
                         _tokenSource.Cancel(); break;
                     }
+                }
 
-                    this.Invoke(new MethodInvoker(
-                        delegate ()
-                        {
-                            display?.appendLog($"{Global.Instance.Validation[index].Response}");
-                        })
-                    );
+                if (repeater == 360)
+                {
+                    _tokenSource.Cancel(); break;
+                }
 
-                    repeater = 0;
+                if (_token.IsCancellationRequested) break;
 
-                    while (!_token.IsCancellationRequested & repeater < 360)
+                display?.appendLog($"{Global.Instance.Validation[index].Response}");
+
+                repeater = 0;
+
+                while (!_token.IsCancellationRequested & repeater < 360)
+                {
+                    try
                     {
                         if (_serialPort.BytesToRead > 0)
                         {
@@ -198,24 +164,32 @@ namespace OSTIA
                                 repeater += 1;
                             }
                         }
-                        await Task.Delay(10, _token).ConfigureAwait(false);
+                        else
+                        {
+                            repeater += 1;
+                        }
+                        await Task.Delay(5, _token).ConfigureAwait(false);
                     }
-
-                    if (repeater == 360)
+                    catch (Exception)
                     {
                         _tokenSource.Cancel(); break;
                     }
+                }
 
-                    this.Invoke(new MethodInvoker(
-                        delegate ()
-                        {
-                            display?.appendLog($"{Global.Instance.Validation[index].Dial}");
-                        })
-                    );
+                if (repeater == 360)
+                {
+                    _tokenSource.Cancel(); break;
+                }
 
-                    repeater = 0;
+                if (_token.IsCancellationRequested) break;
 
-                    while (!_token.IsCancellationRequested & repeater < 360)
+                display?.appendLog($"{Global.Instance.Validation[index].Dial}");
+
+                repeater = 0;
+
+                while (!_token.IsCancellationRequested & repeater < 360)
+                {
+                    try
                     {
                         if (_serialPort.BytesToRead > 0)
                         {
@@ -233,22 +207,32 @@ namespace OSTIA
                                 repeater += 1;
                             }
                         }
-                        await Task.Delay(10, _token).ConfigureAwait(false);
+                        else
+                        {
+                            repeater += 1;
+                        }
+                        await Task.Delay(5, _token).ConfigureAwait(false);
                     }
-
-                    if (repeater == 360)
+                    catch (Exception)
                     {
                         _tokenSource.Cancel(); break;
                     }
-                    this.Invoke(new MethodInvoker(
-                        delegate ()
-                        {
-                            display?.appendLog($"{Global.Instance.Validation[index].Power}");
-                        })
-                    );
-                    repeater = 0;
 
-                    while (!_token.IsCancellationRequested & repeater < 360)
+                }
+
+                if (repeater == 360)
+                {
+                    _tokenSource.Cancel(); break;
+                }
+
+                if (_token.IsCancellationRequested) break;
+
+                display?.appendLog($"{Global.Instance.Validation[index].Power}");
+                repeater = 0;
+
+                while (!_token.IsCancellationRequested & repeater < 360)
+                {
+                    try
                     {
                         if (_serialPort.BytesToRead > 0)
                         {
@@ -266,79 +250,67 @@ namespace OSTIA
                                 repeater += 1;
                             }
                         }
-                        await Task.Delay(10, _token).ConfigureAwait(false);
+                        else
+                        {
+                            repeater += 1;
+                        }
+                        await Task.Delay(5, _token).ConfigureAwait(false);
                     }
-
-                    if (repeater == 360)
+                    catch (Exception)
                     {
                         _tokenSource.Cancel(); break;
                     }
-
-                    this.Invoke(new MethodInvoker(
-                        delegate ()
-                        {
-                            display?.appendLog($"{Global.Instance.Validation[index].Pause}");
-                        })
-                    );
-
-                    repeater = 0;
-
-                    index += 1;
-
                 }
-                catch (TimeoutException)
+
+                if (repeater == 360)
                 {
-                    _tokenSource.Cancel();
+                    _tokenSource.Cancel(); break;
                 }
+
+                if (_token.IsCancellationRequested) break;
+
+                display?.appendLog($"{Global.Instance.Validation[index].Pause}");
+
+                repeater = 0;
+
+                index += 1;
             }
 
-
-            if (!_token.IsCancellationRequested)
+            if (index > 0)
             {
-                this.Invoke(new MethodInvoker(
-                    delegate ()
-                    {
-                        display?.appendSeg("---Receiving was completed--");
-                        display?.appendPart("Data Saving");
-                    })
-                );
+                display?.appendSeg("---Receiving was completed--");
+                display?.appendPart("Data Saving");
+
                 Global.Instance.Session.MaxPoints = index;
 
-                using (SaveFileDialog saveFileDialog1 = new SaveFileDialog())
+                string fileName = "";
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog()
                 {
-                    saveFileDialog1.Filter = "IAD Image|*.iad";
-                    saveFileDialog1.Title = "Save an IAD File";
-                    saveFileDialog1.OverwritePrompt = true;
-                    saveFileDialog1.InitialDirectory = Environment.CurrentDirectory;
+                    Filter = "NCR Image|*.ncr",
+                    Title = "Save an NCR File",
+                    OverwritePrompt = true,
+                    InitialDirectory = Environment.CurrentDirectory,
+                };
+
+                this.Invoke((System.Windows.Forms.MethodInvoker)delegate
+                {
                     if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
                     {
-                        if (saveFileDialog1.FileName != "")
-                        {
-                            using (TextWriter tw = File.CreateText(saveFileDialog1.FileName))
-                            {
-                                tw.WriteLine(DateTime.Now.ToString("yyyy-M-d h:m:s"));
-                                tw.WriteLine(Global.Instance.Person.FirstName + "|" + Global.Instance.Person.SurName + "|" + Global.Instance.Person.DOB);
-                                Global.Instance.Session.Completed = DateTime.Now.ToString("yyyy-M-d h:m:s");
-                                tw.WriteLine(Global.Instance.Session.toString());
-                                for (int i = 0; i < Global.Instance.Session.MaxPoints; i++)
-                                {
-                                    tw.WriteLine(Global.Instance.Validation[i].Power + "|" + Global.Instance.Validation[i].Response + "|" + Global.Instance.Validation[i].Pause + "|" + Global.Instance.Validation[i].Dial);
-                                }
-                            }
-                        }
-
-                        this.Invoke(new MethodInvoker(
-                            delegate ()
-                            {
-                                display?.appendSeg($"Data successfully saved in {saveFileDialog1.FileName}");
-                                OpenFile(true);
-                            })
-                        );
+                        fileName = saveFileDialog1.FileName;
                     }
+                });
+
+
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    SaveMemory(fileName);
+
+                    display?.appendSeg($"Data successfully saved in {fileName}");
+                    OpenFile(true);
                 }
             }
 
-            this.Invoke(new MethodInvoker(
+            this.Invoke(new System.Windows.Forms.MethodInvoker(
                 delegate ()
                 {
                     mnuGather.Enabled = true;
@@ -352,16 +324,58 @@ namespace OSTIA
             }
         }
 
+        private void SaveMemory(string filename)
+        {
+            Global.Instance.Session.Completed = DateTime.Now.ToString("yyyy-M-d h:m:s");
+
+            using (TextWriter tw = File.CreateText(filename))
+            {
+                tw.WriteLine(AESCryptor.Encrypt(DateTime.Now.ToString("yyyy-M-d h:m:s"), Global.key));
+                tw.WriteLine(AESCryptor.Encrypt(Global.Instance.Person.toString(), Global.key));
+                tw.WriteLine(AESCryptor.Encrypt(Global.Instance.Session.toString(), Global.key));
+
+                for (int i = 0; i < Global.Instance.Session.MaxPoints; i++)
+                {
+                    tw.WriteLine(AESCryptor.Encrypt(Global.Instance.Validation[i].toString(), Global.key));
+                }
+                /*using (Aes myAes = Aes.Create())
+                {
+                    
+                }*/
+            }
+            /*using (TextWriter tw = File.CreateText(fileName))
+            {
+                tw.WriteLine(DateTime.Now.ToString("yyyy-M-d h:m:s"));
+                tw.WriteLine(Global.Instance.Person.FirstName + "|" + Global.Instance.Person.SurName + "|" + Global.Instance.Person.DOB);
+                Global.Instance.Session.Completed = DateTime.Now.ToString("yyyy-M-d h:m:s");
+                tw.WriteLine(Global.Instance.Session.toString());
+                for (int i = 0; i < Global.Instance.Session.MaxPoints; i++)
+                {
+                    tw.WriteLine(Global.Instance.Validation[i].Power + "|" + Global.Instance.Validation[i].Response + "|" + Global.Instance.Validation[i].Pause + "|" + Global.Instance.Validation[i].Dial);
+                }
+
+            }*/
+        }
         public void mnuGather_Click(object sender, EventArgs e)
         {
-            display = new Displayer();
-            display.MdiParent = this;
-            display.WindowState = FormWindowState.Maximized;
-            display.Show();
+            if (display == null)
+            {
+                display = new Displayer();
+                display.MdiParent = this;
+                display.WindowState = FormWindowState.Maximized;
+                display.Show();
+
+                display.FormClosed += Displayer_FormClosed;
+            }
+
             display.startLog();
 
             try
             {
+                if (_serialPort.IsOpen)
+                {
+                    _serialPort.Close();
+                }
                 _serialPort.Open();
                 _tokenSource = new CancellationTokenSource();
                 _token = _tokenSource.Token;
@@ -388,7 +402,7 @@ namespace OSTIA
             if (result == DialogResult.Yes)
             {
                 closer = result;
-                Application.Exit();
+                System.Windows.Forms.Application.Exit();
             }
             else
             {
@@ -399,17 +413,24 @@ namespace OSTIA
 
         private void mnuOpenFile_Click(object sender, EventArgs e)
         {
-            display = new Displayer();
-            display.MdiParent = this;
-            display.WindowState = FormWindowState.Maximized;
-            display.Show();
+            if (display == null)
+            {
+                display = new Displayer();
+                display.MdiParent = this;
+                display.WindowState = FormWindowState.Maximized;
+                display.Show();
+
+                display.FormClosed += Displayer_FormClosed;
+            }
+
             display.startLog();
 
             OpenFileDialog openFileDialog1 = new OpenFileDialog()
             {
-                FileName = "Select a IAD file",
-                Filter = "IAD files (*.iad)|*.iad",
-                Title = "Open IAD file"
+                FileName = "Select a NCR file",
+                Filter = "NCR files (*.ncr)|*.ncr",
+                Title = "Open NCR file",
+                InitialDirectory = Directory.GetCurrentDirectory()
             };
 
             if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
@@ -424,6 +445,47 @@ namespace OSTIA
             {
                 try
                 {
+                    //goto jump1;
+                    using (TextReader tr = File.OpenText(filePath))
+                    {
+                        string? strline;
+
+                        try
+                        {
+                            if ((strline = tr.ReadLine()) != null)
+                            {
+                                DateTime dt = DateTime.Parse(AESCryptor.Decrypt(strline, Global.key));
+                            }
+
+                            if ((strline = tr.ReadLine()) != null)
+                            {
+                                Patient? _person = Patient.Parse(AESCryptor.Decrypt(strline, Global.key));
+                            }
+
+                            if ((strline = tr.ReadLine()) != null)
+                            {
+                                Global.Instance.Session = Exam.Parse(AESCryptor.Decrypt(strline, Global.key));
+                            }
+
+                            int i = 0;
+                            while ((strline = tr.ReadLine()) != null)
+                            {
+                                Inquiry _validation = Inquiry.Parse(AESCryptor.Decrypt(strline, Global.key));
+                                Global.Instance.Validation[i].Power = _validation.Power;
+                                Global.Instance.Validation[i].Response = _validation.Response;
+                                Global.Instance.Validation[i].Pause = _validation.Pause;
+                                Global.Instance.Validation[i].Dial = _validation.Dial;
+                                i += 1;
+                            }
+
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
+
+                    /*jump1:
                     using (TextReader tr = File.OpenText(filePath))
                     {
                         string? strline;
@@ -453,7 +515,7 @@ namespace OSTIA
                             Global.Instance.Validation[i].Dial = _validation.Dial;
                             i += 1;
                         }
-                    }
+                    }*/
                 }
                 catch (SecurityException ex)
                 {
@@ -468,26 +530,78 @@ namespace OSTIA
 
         private void mnuAbout_Click(object sender, EventArgs e)
         {
-            display = new Displayer();
+            /*display = new Displayer();
             display.MdiParent = this;
             display.WindowState = FormWindowState.Maximized;
             display.Show();
 
             Task.Delay(1500).ContinueWith(_ =>
             {
-                if(display.InvokeRequired)
+                if (display.InvokeRequired)
                 {
-                    Invoke((MethodInvoker)delegate ()
+                    Invoke((System.Windows.Forms.MethodInvoker)delegate ()
                     {
-                        display?.DrawGraph(true);
-                    });                    
+                        display?.DrawGraph();
+                    });
                 }
                 else
                 {
-                    display?.DrawGraph(true);
+                    display?.DrawGraph();
                 }
-                
-            }).ConfigureAwait(false);            
+
+            }).ConfigureAwait(false);*/
+        }
+
+        private void mnuScale_Click(object sender, EventArgs e)
+        {
+            if (display == null) return;
+            var strScale = Prompt.ShowDialog("Enter Scale", "Custom Scaling", $"{display.Scales}");
+            if (string.IsNullOrEmpty(strScale)) { return; }
+            int scales = 100;
+            if (!Int32.TryParse(strScale, out scales))
+            {
+                display.setScale(100);
+            }
+
+            display.setScale(scales);
+        }
+
+        private void saveMemoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string fileName = "";
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog()
+            {
+                Filter = "NCR Image|*.ncr",
+                Title = "Save an NCR File",
+                OverwritePrompt = true,
+                InitialDirectory = Environment.CurrentDirectory,
+            };
+
+            if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
+            {
+                fileName = saveFileDialog1.FileName;
+            }
+
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                SaveMemory(fileName);
+            }
+        }
+
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Summery summery = new Summery();
+            summery.MdiParent = this;
+            summery.WindowState = FormWindowState.Maximized;
+            summery.Show();
+        }
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_tokenSource != null)
+            {
+                _tokenSource.Cancel();
+            }
         }
     }
 }

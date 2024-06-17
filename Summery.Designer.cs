@@ -129,7 +129,7 @@
             btnAppy.Name = "btnAppy";
             btnAppy.Size = new Size(99, 35);
             btnAppy.TabIndex = 7;
-            btnAppy.Text = "Appy";
+            btnAppy.Text = "Print";
             btnAppy.UseVisualStyleBackColor = true;
             btnAppy.Click += btnAppy_Click;
             // 
@@ -137,6 +137,7 @@
             // 
             txtDoc.BorderStyle = BorderStyle.FixedSingle;
             txtDoc.Dock = DockStyle.Fill;
+            txtDoc.Font = new Font("Segoe UI", 12F);
             txtDoc.Location = new Point(0, 50);
             txtDoc.Margin = new Padding(5, 10, 5, 5);
             txtDoc.Name = "txtDoc";

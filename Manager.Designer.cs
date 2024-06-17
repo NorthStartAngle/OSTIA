@@ -38,9 +38,10 @@
             mnuAssessment = new ToolStripMenuItem();
             mnuGather = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
-            otherToolStripMenuItem = new ToolStripMenuItem();
+            mnuScale = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             mnuAbout = new ToolStripMenuItem();
+            stopToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -63,25 +64,26 @@
             // mnuOpenFile
             // 
             mnuOpenFile.Name = "mnuOpenFile";
-            mnuOpenFile.Size = new Size(180, 22);
+            mnuOpenFile.Size = new Size(103, 22);
             mnuOpenFile.Text = "Open";
             mnuOpenFile.Click += mnuOpenFile_Click;
             // 
             // printToolStripMenuItem
             // 
             printToolStripMenuItem.Name = "printToolStripMenuItem";
-            printToolStripMenuItem.Size = new Size(180, 22);
+            printToolStripMenuItem.Size = new Size(103, 22);
             printToolStripMenuItem.Text = "Print";
+            printToolStripMenuItem.Click += printToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
+            toolStripSeparator1.Size = new Size(100, 6);
             // 
             // mnuExit
             // 
             mnuExit.Name = "mnuExit";
-            mnuExit.Size = new Size(180, 22);
+            mnuExit.Size = new Size(103, 22);
             mnuExit.Text = "Exit";
             // 
             // operatorToolStripMenuItem
@@ -94,28 +96,29 @@
             // mnuAssessment
             // 
             mnuAssessment.Name = "mnuAssessment";
-            mnuAssessment.Size = new Size(180, 22);
+            mnuAssessment.Size = new Size(137, 22);
             mnuAssessment.Text = "Assesement";
             // 
             // mnuGather
             // 
             mnuGather.Name = "mnuGather";
-            mnuGather.Size = new Size(180, 22);
+            mnuGather.Size = new Size(137, 22);
             mnuGather.Text = "Gather";
             mnuGather.Click += mnuGather_Click;
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { otherToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { mnuScale, stopToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new Size(46, 20);
             toolsToolStripMenuItem.Text = "Tools";
             // 
-            // otherToolStripMenuItem
+            // mnuScale
             // 
-            otherToolStripMenuItem.Name = "otherToolStripMenuItem";
-            otherToolStripMenuItem.Size = new Size(109, 22);
-            otherToolStripMenuItem.Text = "Others";
+            mnuScale.Name = "mnuScale";
+            mnuScale.Size = new Size(180, 22);
+            mnuScale.Text = "Scale";
+            mnuScale.Click += mnuScale_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -127,9 +130,16 @@
             // mnuAbout
             // 
             mnuAbout.Name = "mnuAbout";
-            mnuAbout.Size = new Size(180, 22);
+            mnuAbout.Size = new Size(107, 22);
             mnuAbout.Text = "About";
             mnuAbout.Click += mnuAbout_Click;
+            // 
+            // stopToolStripMenuItem
+            // 
+            stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            stopToolStripMenuItem.Size = new Size(180, 22);
+            stopToolStripMenuItem.Text = "Stop";
+            stopToolStripMenuItem.Click += stopToolStripMenuItem_Click;
             // 
             // Manager
             // 
@@ -171,8 +181,9 @@
         private ToolStripMenuItem mnuGather;
         private ToolStripMenuItem mnuExit;
         private ToolStripMenuItem mnuAssessment;
-        private ToolStripMenuItem otherToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem mnuAbout;
+        private ToolStripMenuItem mnuScale;
+        private ToolStripMenuItem stopToolStripMenuItem;
     }
 }

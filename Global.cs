@@ -5,12 +5,124 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using System.Windows.Forms;
+using System.Security.Cryptography;
 
 namespace OSTIA
 {
+    public class VIEW_WINDOW
+    {
+        private VIEW_WINDOW? _parent = null;
+        private Point sPt;
+        private Point ePt;
+
+        private Point sCPt;
+        private Point eCPt;
+
+        bool isSPT = false;
+        bool isCPT = false;
+
+        public VIEW_WINDOW(VIEW_WINDOW parent = null)
+        {
+            _parent = parent;
+        }
+
+        public VIEW_WINDOW setVIEW(int _x1, int _y1, int _x2, int _y2)
+        {
+            sPt.X = _x1; sPt.Y = _y1;
+            ePt.X = _x2; ePt.Y = _y2;
+
+            isSPT = true;
+            return this;
+        }
+
+        public VIEW_WINDOW setWINDOW(int _x1, int _y1, int _x2, int _y2)
+        {
+            sCPt.X = _x1; sCPt.Y = _y1;
+            eCPt.X = _x2; eCPt.Y = _y2;
+
+            isCPT = true;
+            return this;
+        }
+
+        public bool isOK()
+        {
+            return isSPT & isCPT;
+        }
+
+        public double X(double _x)
+        {
+            //if (_x > eCPt.X) _x = eCPt.X;
+            //if (_x < sCPt.X) _x = sCPt.X;
+
+            double x = sPt.X + (double)(_x - sCPt.X) * (ePt.X - sPt.X) / (eCPt.X - sCPt.X);
+
+            if (_parent != null)
+            {
+                return _parent.X(x);
+            }
+            else
+            {
+                return x;
+            }
+        }
+
+        public double Y(double _y)
+        {
+            //if (_y > eCPt.Y) _y = eCPt.Y;
+            //if (_y < sCPt.Y) _y = sCPt.Y;
+            double y = sPt.Y + (double)(_y - sCPt.Y) * (ePt.Y - sPt.Y) / (eCPt.Y - sCPt.Y);
+
+            if (_parent != null)
+            {
+                return _parent.Y(y);
+            }
+            else
+            {
+                return y;
+            }
+        }
+
+        public double W(double _w)
+        {
+            double w = _w * (double)(ePt.X - sPt.X) / (eCPt.X - sCPt.X);
+            if (_parent != null)
+            {
+                return _parent.W(w);
+            }
+            else
+            {
+                return w;
+            }
+        }
+
+        public double H(double _h)
+        {
+            double h = _h * (double)(ePt.Y - sPt.Y) / (eCPt.Y - sCPt.Y);
+            if (_parent != null)
+            {
+                return _parent.H(h);
+            }
+            else
+            {
+                return h;
+            }
+        }
+
+        public Point PT(Point _pt)
+        {
+            return new Point((int)X(_pt.X), (int)Y(_pt.Y));
+        }
+
+        public Point PT(int _x, int _y)
+        {
+            return new Point((int)X(_x), (int)Y(_y));
+        }
+
+    }
+
     public static class Prompt
     {
-        public static string ShowDialog(string text, string caption)
+        public static string ShowDialog(string text, string caption,string _default="100")
         {
             Form prompt = new Form()
             {
@@ -22,6 +134,7 @@ namespace OSTIA
             };
             Label textLabel = new Label() { Left = 50, Top = 20, Text = text };
             TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
+            textBox.Text = _default;
             Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
             confirmation.Click += (sender, e) => { prompt.Close(); };
             prompt.Controls.Add(textBox);
@@ -160,7 +273,7 @@ namespace OSTIA
         private static Global? _instance = null;
         public dbAccess? db = null;
         public users? loginUser = null;
-        public Inquiry[] Validation = new Inquiry[3600];
+        public Inquiry[] Validation = new Inquiry[3601];
         public Exam Session;
         public DateTime Machine;
         public Patient Person;
@@ -168,6 +281,9 @@ namespace OSTIA
         public string OfficeName;
         public string OfficeAddr1;
         public string OfficeAddr2;
+
+        internal static string key = "northstar-1121";
+        public string version = "5.0.1";
 
         public Global()
         {

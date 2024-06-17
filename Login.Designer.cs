@@ -76,9 +76,9 @@
             label2.ForeColor = SystemColors.GradientActiveCaption;
             label2.Location = new Point(136, 237);
             label2.Name = "label2";
-            label2.Size = new Size(327, 38);
+            label2.Size = new Size(329, 38);
             label2.TabIndex = 2;
-            label2.Text = "Revision 1.0a1  Feb 2024";
+            label2.Text = "Revision 5.0.1  June 2024";
             // 
             // label3
             // 
